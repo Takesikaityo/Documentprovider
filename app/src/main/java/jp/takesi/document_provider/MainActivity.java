@@ -1,11 +1,15 @@
 package jp.takesi.document_provider;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private static final int READ_REQUEST_CODE = 42;
@@ -47,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent resultData) {
 
-        // そのACTION_OPEN_DOCUMENTはリクエストコードとともにインテントが送信されました
-        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+        // そのACTION_OPEN_DOCUMENTはREAD_REQUEST_CODEとともにインテントが送信されました
         // ここに表示されているリクエストコードが一致しない場合は、他の意図に対する応答です。
         // 下のコードは実行しないでください。
 
@@ -63,7 +67,50 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("[Important]", "Uri: " + uri.toString());
                 ImageView imageview = (ImageView) findViewById(R.id.imageView);
                 imageview.setImageURI(uri);
+                dumpImageMetaData(uri);
             }
+        }
+    }
+
+    public void dumpImageMetaData(Uri uri) {
+
+        // クエリは、単一のドキュメントにのみ適用されるため、1行だけを返します。
+        // 1つのドキュメントのすべてのフィールドが必要なので、
+        // フィールドのフィルタリング、ソート、または選択は不要です。
+        Cursor cursor = this.getContentResolver()
+                .query(uri, null, null, null, null, null);
+
+        try {
+            // カーソルが0行の場合、moveToFirst()はfalseを返します。
+            // "見るべきことがあれば非常に便利です。それを見てください "条件文。
+            if (cursor != null && cursor.moveToFirst()) {
+
+                // 「表示名」と呼ばれることに注意してください。
+                // これはプロバイダ固有であり、必ずしもファイル名である必要はありません。
+                String displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                Log.i("[important]", "Display Name: " + displayName);
+
+                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                // サイズが不明の場合、格納される値はnullです。
+                // しかし、Javaではintをnullにすることはできないため、
+                // 振る舞いは実装固有のものであり、これは単に「予測不可能な」ための素晴らしい用語です。
+                // したがって、原則として、intに代入する前にnullであるかどうかを確認してください。
+                // これは頻繁に起こります。
+                // ストレージAPIでは、ローカルにサイズがわからないリモートファイルが許可されます。
+                String size = null;
+                if (!cursor.isNull(sizeIndex)) {
+                    // 技術的には列にintが格納されますが、
+                    // cursor.getString()は変換を自動的に行います。
+                    size = cursor.getString(sizeIndex);
+                } else {
+                    size = String.valueOf(R.string.unknown);
+                }
+                Log.i("[important]", "Size: " + size);
+                TextView textView = (TextView)findViewById(R.id.textView);
+                textView.setText("Display Name : " + displayName + "\n" + "Size : " + size + "\n" + "Uri : " + uri.toString());
+            }
+        } finally {
+            cursor.close();
         }
     }
 
@@ -82,7 +129,20 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //簡単な説明
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_about) {
+            AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
+            alertDialog.setTitle(R.string.action_about);//set title
+            alertDialog.setMessage(R.string.about);//set content
+            alertDialog.setIcon(R.mipmap.ic_launcher);//set icon
+            alertDialog.setCancelable(false);
+            alertDialog.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.create();
+            alertDialog.show();
             return true;
         }
 

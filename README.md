@@ -14,6 +14,5 @@ SAF を利用することで、ユーザーは設定したドキュメント ス
 
 ### スクリーンショット
 
-<img src="https://github.com/Takesikaityo/Documentprovider/blob/master/screenshots/screenshot.png?raw=true" width="30%" />
 <img src="https://github.com/Takesikaityo/Documentprovider/blob/master/screenshots/screenshot1.png?raw=true" width="30%" />
 <img src="https://github.com/Takesikaityo/Documentprovider/blob/master/screenshots/screenshot2.png?raw=true" width="30%" />

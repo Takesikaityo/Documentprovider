@@ -1,4 +1,11 @@
 <resources>
-    <string name="app_name">Document-provider</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Document-Provider</string>
+    <string name="action_about">このアプリについて</string>
+    <string name="unknown">不明</string>
+    <string name="about">このサンプルアプリはストレージ アクセス フレームワークというものを使用しています。
+        このAPIを使うことができるのはAndroid 4.4 （API レベル 19）以上です。
+        (サンプルはAPI レベル 20以上ですが設定を変えると19でも動きます。)
+        SAF を利用することで、ユーザーは設定したドキュメント ストレージ プロバイダ全体から簡単にドキュメント、画像、その他のファイルを
+        参照して開くことができます。 標準の使いやすい UI により、アプリやプロバイダを通じて一貫性のある方法でファイルを参照したり、
+        最近使用したファイルにアクセスしたりできます。</string>
 </resources>
